@@ -1,0 +1,74 @@
+{% extends "layout/default.html" %}
+
+{% block content %}
+    <h1>
+        Кабинет авторизованного пользователя
+    </h1>
+    <hr>
+    <h2>
+        Никнейм пользователя: {{request.user.username}}
+    </h2>
+    <div>
+        Здесь может содержаться персональная информация для каждого пользователя
+    <div>
+        {% comment %}
+    </br>
+    {% if is_not_author %}
+        <a class="btn btn-info" href="{% url 'accounts:upgrade' %}">
+            Стать автором
+        </a>
+    {% else %}
+        <h3>
+            Вы в группе "Авторы"
+        </h3>
+    {% endif %}
+    </br>
+    </br>
+        {% endcomment %}
+        <hr>
+        <h2>Отклики на ваши объявления</h2>
+        <div class="mt-3 mb-3">
+         <form method="GET">
+            {{ comment_filter.form }}
+<!--            {{ comment_filter.form.as_p }}-->
+             <input class="btn btn-primary" type="submit" value="Применить фильтр">
+        </form>
+
+        </div>
+
+        <ul class="list-group">
+            {% for comment in comment_filter.qs %}
+                <li class="list-group-item">
+                    <h3><a href="{% url 'news:post_detail' comment.commentForPost.id %}">{{ comment.commentForPost.postTitle }}</a></h3>
+                    <p>{{ comment.commentText|truncatechars:50 }}</p>
+                    <p>Автор отклика: {{ comment.commentUser }}</p>
+                    <p>Дата создания отклика: {{ comment.commentCreated|date:'d M Y года в G:i' }}</p>
+                    {% if not comment.is_accepted %}
+                    <a href="{% url 'news:accept_comment' comment.id %}" class="btn btn-success">Принять отклик</a>
+                    {% else %}
+                    Отклик принят
+                    {% endif %}
+                    <a href="{% url 'news:delete_comment' comment.id %}" class="btn btn-danger">Удалить отклик</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">Пока нет откликов на ваши объявления</li>
+            {% endfor %}
+        </ul>
+<!--        <h2>Мои объявления</h2>
+        <ul class="list-group">
+            {% for post in user_posts %}
+        <h2>{{ post.postTitle }}</h2>
+            {% endfor %}
+
+            {% for post in comment.user.post_set.all %}
+                <li class="list-group-item">
+                    <h3><a href="{% url 'news:post_detail' post.id %}">{{ post.postTitle }}</a></h3>
+                    <div>{{ post.postText|safe }}</div>
+                    <a href="{% url 'news:post_create' post.id %}" class="btn btn-success">Изменить объявление</a>
+                    <a href="{% url 'news:post_delete' post.id %}" class="btn btn-danger">Удалить объявление</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">Пока нет объявлений</li>
+            {% endfor %}
+        </ul>-->
+{% endblock content %}

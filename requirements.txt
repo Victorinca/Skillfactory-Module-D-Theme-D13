@@ -1,0 +1,6 @@
+Django
+django-filter
+django-dbdump
+django-dbbackup
+django-allauth
+runapscheduler

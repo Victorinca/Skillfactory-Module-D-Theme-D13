@@ -1,0 +1,31 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    {% load account %} <!-- Загружаем тег который позволит получить нам ссылку на подтверждение -->
+    <h1>Привет, {{ username }}!</h1>
+    <h2>
+    Опубликован новый пост от <a href="http://127.0.0.1:8000" target="_blank">Ads board</a> в Вашем любимом разделе!
+    </h2>
+    <h3>
+        В категории <b>{{ category }}</b> разместили публикацию на тему: <b>{{ post.postTitle|Censor }}</b>
+    </h3>
+    <h3>
+        Превью поста:
+    </h3>
+        <p>
+        {{ post.postText|Censor|truncatechars:50|safe }}
+        </p>
+    <h3>
+        <a href="http://127.0.0.1:8000{% url 'news:post_detail' post.id %}" target="_blank">
+            Ознакомиться с содержанием публикации
+        </a>
+    </h3>
+</body>
+</html>

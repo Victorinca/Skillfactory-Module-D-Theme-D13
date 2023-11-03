@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    {% load account %} <!-- Загружаем тег который позволит получить нам ссылку на подтверждение -->
+    <h1>Привет, {{ user.username }}!</h1>
+    <h2>Спасибо за регистрацию на сайте <a href="http://127.0.0.1:8000" target="_blank">NewsPaper</a>!</h2>
+    <p>Вы получили это письмо, потому что при регистрации учетной записи на сайте <a href="http://127.0.0.1:8000" target="_blank">NewsPaper</a> был указан ваш адрес электронной почты.</p>
+    <!-- Всставляем ссылку на активацию -->
+    <h3>Чтобы убедиться, что адрес почты при регистрации указан верно, пожалуйста, перейдите <a href="{{ activate_url }}" target="_blank">по ссылке</a>,
+      чтобы активировать вашу учетную запись на сайте.</h3>
+</body>
+</html>

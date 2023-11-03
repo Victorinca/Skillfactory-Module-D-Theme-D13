@@ -1,0 +1,43 @@
+<header class="p-3 text-bg-dark">
+ <div class="container">
+   <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+<!--     <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+       <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+     </a>-->
+
+     <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+       <li><a href="/" class="nav-link px-2">Ads Board - Доска объявлений</a></li>
+
+       <li><a href="/news" class="nav-link px-2">Список объявлений</a></li>
+       <li><a href="/news/search" class="nav-link px-2">Поиск объявлений</a></li>
+      <!-- <li><a href="/about" class="nav-link px-2 text-white">О сайте</a></li>-->
+       <li><a href="/contacts" class="nav-link px-2">Контакты</a></li>
+<!--       <li><a href="/accounts/login" class="nav-link px-2 text-white">Вход в ЛК</a></li>-->
+<!--       <li><a href="/accounts/logout" class="nav-link px-2 text-white">Выход из ЛК</a></li>-->
+<!--       <li><a href="/accounts/signup" class="nav-link px-2 text-white">Регистрация</a></li>-->
+<!--       <li><a href="/accounts/password/reset" class="nav-link px-2 text-white">Пароль?</a></li>-->
+       <li><a href="/admin" class="nav-link px-2 link-primary" target="_blank">Админка</a></li>
+<!--       <li><a href="/accounts/cabinet" class="nav-link px-2 text-white">Кабинет пользователя</a></li>-->
+     </ul>
+
+     <div class="text-end">
+          {% if user.is_authenticated %}
+              <button type="button" class="btn btn-info" onclick="window.location.href = '/accounts/cabinet';">Кабинет</button>
+         {% if request.user.id == None %}
+              <a class="navbar-brand" href="/accounts/login">Вы не зарегистрированы!</a>
+         {% else %}
+              <a class="navbar-brand" href="/accounts/cabinet">Вы зарегистрированы как <b>{{ request.user }}</b></a>
+         {% endif %}
+              <button type="button" class="btn btn-outline-light me-2" onclick="window.location.href = '/accounts/logout';">Выход из ЛК</button>
+          {% else %}
+             <button type="button" class="btn btn-outline-light me-2" onclick="window.location.href = '/accounts/login';">Вход в ЛК</button>
+             <button type="button" class="btn btn-warning" onclick="window.location.href = '/accounts/signup';">Регистрация</button>
+             <button type="button" class="btn btn-outline-light me-2" onclick="window.location.href = '/accounts/password/reset';">Пароль?</button>
+          {% endif %}
+
+
+
+     </div>
+   </div>
+ </div>
+</header>
