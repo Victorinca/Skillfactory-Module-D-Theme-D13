@@ -1,0 +1,85 @@
+<!--  по заданию наследуемся от шаблона default.html -->
+{% extends 'layout/default.html' %}
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+
+<!-- Заголовок страницы -->
+{% block title %}
+Ads board - {{ post.postTitle }}
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам пост, первичный ключ которого был передан в адрес -->
+{% block content %}
+
+</br>
+<div class="card">
+    <div class="card-header">
+        </br>
+        <h3>
+            {{ post.postTitle|Censor }}
+        </h3>
+            <p>
+                Тип объявления:
+                <span class="badge bg-info">
+                     {{ post.get_post_type_display }}
+                </span>
+                Дата публикации:
+                <span class="badge bg-info">
+                    {{ post.postCreated|date:'d M Y, h ч m мин' }}
+                </span>
+                Автор:
+                <span class="badge bg-info">
+                    {{ post.postAuthor.username }}
+                </span>
+                Рейтинг объявления:
+                <span class="badge bg-info">
+                    {{ post.postRating }}
+                </span>
+            </p>
+            <p>
+            Категории:
+            {% for cat in post.postCats.all %}
+                 <span class="badge bg-info">
+                    <a href="{% url 'news:category' cat.id %}" title="Посмотреть категорию" target="_blank">
+                        {{ cat.categoryName }}
+                    </a>
+                 </span>
+            {% endfor %}
+                </br>
+            </p>
+    </div>
+    <div class="card-body fs-3">
+            {{ post.postText|Censor|safe }}
+    </div>
+
+    <div class="card-footer">
+        {% if user.is_authenticated and post.postAuthor == user %}
+            <a href="{% url 'news:post_create' post.id %}" class="btn btn-outline-info btn-sm">Редактировать</a>
+            <a href="{% url 'news:post_delete' post.id %}" class="btn btn-outline-warning btn-sm">Удалить</a>
+        {% endif %}
+    </div>
+</div>
+</br>
+<div class="card mt=3 mb-4 pt=4">
+    <div class="card-body">
+            <!-- Здесь можно добавить изображения, видео и другой контент -->
+            <div class="fs-3">
+                    <p>Откликнулись: {{ post.comment_set.count }} раз(а)</p>
+                {% if post %}
+                    <div>
+                        {% for comment in post.comment_set.all %}
+                            <div class="comment">
+                                <p class="fs-4">Текст комментария: <b>{{ comment.commentText }}</b></p>
+                                <p class="fs-6">Пользователь: {{ comment.commentUser.username }}</p>
+                                </br>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>Пока нет откликов</p>
+                {% endif %}
+                {% if not user_has_comment and not post.postAuthor == request.user %}
+                <a href="{% url 'news:post_comment' post.id %}" class="btn btn-primary">Откликнуться</a>
+                {% endif %}
+    </div>
+</div>
+{% endblock content %}

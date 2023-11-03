@@ -1,0 +1,44 @@
+{% extends 'layout/default.html' %}
+
+{% block title %}
+Ads board - Удаление поста
+{% endblock title %}
+
+{% block content %}
+<div>
+</br>
+<h3>Удалить этот пост?</h3>
+</br>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>
+            Заголовок: {{ post.postTitle }}
+        </h3>
+        <div>
+            Тип поста: <span class="badge bg-info">{{ post.get_post_type_display }}</span>
+            Категории:
+            <span class="badge bg-info">
+            {% for category in post.postCats.all %}
+                {{ category.categoryName }};
+            {% endfor %}
+            </span>
+            </br>
+            Дата публикации: <span class="badge bg-info">{{ post.postCreated }}</span>
+            Автор: <span class="badge bg-info">{{ post.postAuthor.User.username }}</span>
+            Рейтинг поста: <span class="badge bg-info">{{ post.postRating }}</span>
+        </div>
+    </div>
+    <div class="card-body">
+            {{ post.postText|safe }}
+    </div>
+</div>
+</br>
+<form method="POST">
+    {% csrf_token %}
+    <input class="btn btn-danger" type="submit" value="Удалить">
+</form>
+</br>
+
+{% endblock content %}

@@ -1,0 +1,130 @@
+{% extends 'layout/default.html' %}
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+
+{% block title %}
+    Ads board - {{ category }}
+{% endblock title %}
+
+{% block content %}
+
+<div>
+    <h1>Тематическая категория: {{ category }}</h1>
+    <p>Категория № {{ category.id }}</p>
+    <hr>
+</div>
+
+    {% if is_subscribed %}
+    <div class="is_subscribed">
+        <h2>Тема: "{{ category }}" не интересует?</h2>
+        <form method="post" action="{% url 'news:unsubscribe' category.id %}">
+        {% csrf_token %}
+            <button class="btn btn-primary btn-sm" type="submit">Отписаться от категории {{ category }}</button>
+        </form>
+        <p class="fs-5 lh-lg">Вы подписаны, чтобы не пропустить новые публикации по данной тематике!</p>
+    </div>
+    {% else %}
+    <div class="unsubscribed">
+        <h2>Интересует тема: "{{ category }}"?</h2>
+        <form method="post" action="{% url 'news:subscribe' category.id %}">
+        {% csrf_token %}
+            <button class="btn btn-primary btn-sm" type="submit">Подписаться на категорию {{ category }}</button>
+        </form>
+       <p class="fs-5 lh-lg">Подпишитесь, чтобы не пропустить новые публикации по данной тематике!</p>
+    </div>
+    {% endif %}
+
+{% if request.user.is_authenticated %}
+
+{% else %}
+<p>Для подписки, пожалуйста, <a href="/accounts/login/">авторизуйтесь</a> на сайте.</p>
+{% endif %}
+
+<hr>
+{% if news %}
+
+<h4>Количество постов, отображаемых на странице: {{ news|length }} шт.</h4>
+<!--<form method="GET">
+   {{ filter.form }}
+Форму от фильтров сделает Django. А кнопку нужно делать самим
+   <input class="btn btn-primary" type="submit" value="Найти">
+</form>-->
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <tr>
+                <th class="col-4" scope="col">
+                    Заголовок
+                </th>
+                <th scope="col">
+                    Дата публикации
+                </th>
+                <th class="col-3" scope="col">
+                    Тематические категории
+                </th>
+                <th class="col-2" scope="col">
+                    Превью поста
+                </th>
+                <th scope="col">
+                    Действия
+                </th>
+            </tr>
+
+            {% for post in news %}
+            <tr>
+                <td>
+                         <h5><a class="link-primary" href="{% url 'news:post_detail' post.id %}" title="Посмотреть пост" target="_blank">
+                            {{ post.postTitle|Censor }}
+                        </a></h5>
+                </td>
+                <td>
+                    {{ post.postCreated|date:'d M Y' }} <!-- в формате (день.месяц.год) -->
+                </td>
+                <td>
+                    {% for cat in post.postCats.all %}
+                        <span class="badge bg-light text-dark">
+                            <a href="{% url 'news:category' cat.id %}" title="Посмотреть категорию" target="_blank">
+                                {{ cat.categoryName }}
+                            </a>
+                        </span>
+                        </br></br>
+                    {% endfor %}
+                </td>
+                <td>
+                    <!-- {{ new.postText|truncatewords:20 }} --> <!-- Дописываем специальный фильтр, чтобы ограничить количество слов до 20 + многоточие. -->
+                    {{ post.postText|Censor|truncatechars:120|safe }} <!-- Дописываем специальный фильтр, чтобы ограничить количество символов до 50 + многоточие. -->
+                </td>
+
+                <td>
+                    {% if user.is_authenticated and post.postAuthor == user %}
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="window.location.href = '{% url 'news:post_create' post.id %}';" target="_blank">
+                        Редактировать
+                    </button>
+                    </br></br>
+                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="window.location.href = '{% url 'news:post_delete' post.id %}';" target="_blank">
+                        Удалить
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><h5>Можно создать новый пост!</h5></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.location.href = '{% url 'news:post_create' %}';" target="_blank">
+                        Создать пост
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+{% include 'news/parts/paginator.html' %}
+
+{% else %}
+<h2>Постов нет!</h2>
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,16 @@
+<!--  по заданию наследуемся от шаблона default.html -->
+{% extends 'layout/default.html' %}
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+<!-- Название у нас будет post -->
+{% block title %}
+Ads board - Post
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам пост, первичный ключ которого был передан в адрес -->
+{% block content %}
+<h1>{{ post.postTitle|Censor }}</h1>
+<hr>
+<h4>Дата создания: {{ post.postCreated|date:'d M Y, h ч m мин' }}</h4>
+<hr>
+{{ post.postText|Censor|safe }}
+{% endblock content %}

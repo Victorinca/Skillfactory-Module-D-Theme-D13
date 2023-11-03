@@ -1,0 +1,26 @@
+{% extends 'layout/default.html' %}
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+
+{% block title %}
+Откликнуться на объявление
+{% endblock title %}
+
+{% block content %}
+<main>
+    <section class="container my-5">
+        <div class="post-details">
+            <h2 class="post-postTitle">{{ post.postTitle }}</h2>
+            <p class="post-postAuthor">Автор: {{ post.postAuthor }}</p>
+            <p class="post-postCreated">Дата создания: {{ post.postCreated|date:'d M Y года в G:i' }}</p>
+            <p class="post-postText">{{ post.postText|safe }}</p>
+
+            <h3>Откликнуться на объявление</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Откликнуться</button>
+            </form>
+        </div>
+    </section>
+</main>
+{% endblock content %}

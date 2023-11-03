@@ -1,0 +1,30 @@
+<!--  по заданию наследуемся от шаблона default.html -->
+{% extends 'layout/default.html' %}
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+
+<!-- Заголовок страницы -->
+{% block title %}
+Ads board
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам пост, первичный ключ которого был передан в адрес -->
+{% block content %}
+
+</br>
+<div class="card">
+    <div class="card-header">
+        </br>
+            <p>
+                Автор:
+                <span class="badge bg-info">
+                    {{ comment.commentUser.authorUser.username }}
+                </span>
+            </p>
+    </div>
+    <div class="card-body">
+            {{ comment.commentText|Censor|safe }}
+    </div>
+</div>
+</br>
+
+{% endblock content %}

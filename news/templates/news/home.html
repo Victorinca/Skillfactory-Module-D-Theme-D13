@@ -1,0 +1,90 @@
+{% extends 'layout/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Ads board - Доска объявлений
+{% endblock title %}
+
+{% block content %}
+
+<div class="card mt-4 mb-4 bs-card-bg text-white text-center">
+    <svg class="bd-placeholder-img card-img-top" width="100%" height="340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Подробнее" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <title>Подробнее</title>
+        <rect width="100%" height="100%" fill="#91BBD0"></rect>
+        <text x="5%" y="50%" fill="#dee2e6" dy=".3em">Изображение</text>
+    </svg>
+    <div class="card-img-overlay">
+        <div class="card-body pb-4">
+            <h1 class="card-title">Ads Board - Доска объявлений</h1>
+            <hr>
+            <h4 class="card-subtitle mb-2 text-body-secondary">Здесь можно:</br>
+                    подавать объявления,</br>
+                    оставлять комментарии.</br>
+            </h4>
+            <a href="{% url 'news:newslist' %}" class="btn btn-outline-light btn-lg">Посмотреть список объявлений</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for category, posts_count in categories %}
+        <div class="col-6 mt-4 mb-4">
+            <div class="card-group">
+                <div class="card mb-4 text-bg-light text-center">
+
+                    {% comment "Comment" %}
+                        <img src="..." class="card-img-top" alt="...">
+                    {% endcomment %}
+
+                    <svg class="bd-placeholder-img card-img-top" width="100%" height="220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Подробнее" preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Подробнее</title>
+                        <rect width="100%" height="100%" fill="#3186a9"></rect>
+                        <text x="10%" y="50%" fill="#dee2e6" dy=".3em">Изображение категории</text>
+                    </svg>
+                    <div class="card-body">
+                        {% comment "Comment" %}
+                        <h4 class="card-subtitle mb-2 text-body-secondary">Тематическая категория № {{ category.id }}</h4>
+                        {% endcomment %}
+                        <h4 class="card-subtitle mb-2 text-body-secondary">Тематическая категория:</h4>
+                        <h2 class="card-title">
+                            <a class="link-info" href="{% url 'news:category' category.id %}" title="Посмотреть пост" target="_blank">
+                            {{ category.categoryName }}</a>
+                        </h2>
+
+                            {% comment "Comment" %}
+                            <p class="card-text">Количество постов: {{ category.post_set.count }}</p>
+                            {% endcomment %}
+                        <div class="d-grid gap-2">
+                            {% if is_subscribed %}
+                            <div class="is_subscribed">
+                                <p class="fs-5 lh-lg">Вы подписаны, чтобы не пропустить новые публикации по данной тематике! Если тема не интересует, можно отписаться.</p>
+                                <form method="post" action="{% url 'news:unsubscribe' category.id %}">
+                                {% csrf_token %}
+                                    <button class="btn btn-outline-primary btn-lg" type="submit">Отписаться от категории {{ category }}</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <div class="unsubscribed">
+                                <p class="fs-5 lh-lg">Интересует тема? Подпишитесь, чтобы не пропустить новые публикации по данной тематике!</p>
+                                <form method="post" action="{% url 'news:subscribe' category.id %}">
+                                {% csrf_token %}
+                                    <button class="btn btn-outline-primary btn-lg" type="submit">Подписаться на категорию {{ category }}</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                            {% if request.user.is_authenticated %}
+
+                            {% else %}
+                            <p>Для подписки, пожалуйста, <a href="/accounts/login/">авторизуйтесь</a> на сайте.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-primary-subtle pt-3 pb-3">
+                        <small class="text-body-secondary">Количество объявлений в категории: {{ posts_count }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock content %}

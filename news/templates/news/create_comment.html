@@ -1,0 +1,19 @@
+{% extends 'layout/default.html' %}
+
+{% block title %}
+AdBoard - Создание комментария
+{% endblock title %}
+
+{% block content %}
+
+<h3>Комментарий</h3>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    </br></br>
+    <input class="btn btn-success" type="submit" value="Сохранить">
+    </br></br>
+</form>
+
+{% endblock content %}

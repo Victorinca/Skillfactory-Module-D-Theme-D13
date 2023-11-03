@@ -1,0 +1,53 @@
+{% extends 'layout/default.html' %}
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+
+{% block title %}
+Ads board - Поиск объявлений
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все посты -->
+{% block content %}
+<h1>Поиск объявлений</h1>
+<hr>
+
+<h3>Выберите параметры объявления для поиска</h3>
+
+<form method="GET">
+   {{ filter.form }}
+<!--Форму от фильтров сделает Django. А кнопку нужно делать самим-->
+   <input class="btn btn-primary" type="submit" value="Найти">
+</form>
+
+</br>
+<h4>В соответствии с выбранными параметрами количество найденных постов: {{ posts|length }}</h4>
+<hr>
+
+{% for post in filter.qs %}
+    <div class="container">
+        <div class="row">
+            <div class="col-9">
+                <h5>
+                    <a class="link-primary" href="{% url 'news:post_detail' post.id %}">
+                         {{ post.postTitle|Censor }}
+                    </a>
+                </h5>
+                Дата создания: {{ post.postCreated|date:'d M Y' }}
+            </div>
+            {% if user.is_authenticated and post.postAuthor == user %}
+            <div class="col">
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="window.location.href = '{% url 'news:post_create' post.id %}';" target="_blank">
+                        Редактировать
+                </button>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-outline-warning btn-sm" onclick="window.location.href = '{% url 'news:post_delete' post.id %}';" target="_blank">
+                        Удалить
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    </br>
+{% endfor %}
+
+{% endblock content %}

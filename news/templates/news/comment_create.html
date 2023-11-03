@@ -1,0 +1,20 @@
+{% extends 'layout/default.html' %}
+
+{% block title %}
+NewsPaper - Создание и редактирование поста
+{% endblock title %}
+
+{% block content %}
+
+<h3>Комментарий</h3>
+
+<form method="POST" action="{% url 'news:comment_create' post_id=post.id %}">
+    {% csrf_token %}
+    {{ form }}
+    </br></br>
+    <input class="btn btn-success" type="submit" value="Сохранить">
+    </br></br>
+</form>
+
+
+{% endblock content %}

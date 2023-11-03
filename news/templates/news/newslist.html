@@ -1,0 +1,144 @@
+<!--  наследуемся от шаблона default.html)-->
+{% extends 'layout/default.html' %}
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+<!-- Название у нас будет posts -->
+{% block title %}
+Ads board - Список объявлений
+{% endblock title %}
+
+
+<!-- В контенте на странице мы выводим все посты -->
+{% block content %}
+<h1>Список объявлений</h1>
+<!-- добавляем сюда строки - if, else, <h2>, endif -->
+<hr>
+{% if news %} <!-- Выводим посты только если они есть с помощью тега if -->
+
+    <h3>Количество объявлений, отображаемых на странице: {{ news|length }} шт.</h3>
+<!-- Здесь должно быть выведено количество всех новостей (используется фильтр news|length) -->
+
+<!--<form method="GET">
+   {{ filter.form }}
+Форму от фильтров сделает Django. А кнопку нужно делать самим
+   <input class="btn btn-primary" type="submit" value="Найти">
+</form>-->
+{% if request.user.is_authenticated %}
+
+{% else %}
+<p>Вы можете подписываться на категории, чтобы не пропустить новые публикации по интересной для Вас тематике. Для подписки, пожалуйста, <a href="/accounts/login/">авторизуйтесь</a> на сайте.</p>
+{% endif %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <tr>
+                <th class="col-4" scope="col">
+                    Заголовок
+                </th>
+                <th scope="col">
+                    Дата публикации <!-- в формате (день.месяц.год) -->
+                </th>
+                <th class="col-3" scope="col">
+                    Тематические категории
+                </th>
+                <th class="col-2" scope="col">
+                    Превью объявления
+                </th>
+                <th scope="col">
+                    Действия
+                </th>
+            </tr>
+
+            {% for post in news %}
+<!-- Для каждого поста будет генерироваться новая строчка, т.е. новый HTML-код. При этом сам цикл работает так же, как и в python. new -- переменная цикла, т.е. наш пост, взятый из общего списка -->
+            <tr>
+                <td>
+<!-- Переменные в шаблоне ничем не отличаются от переменных в Python.
+Здесь также можно получать доступ к полям класса.
+Например, здесь выводим заголовок, в следующем столбце превью и т.д.
+-->
+                        <!-- <a href="/news/{{ post.id }}">{{ post.postTitle|Censor }}</a> -->
+                         <h5><a class="link-primary" href="{% url 'news:post_detail' post.id %}" title="Посмотреть пост" target="_blank">
+                        <!--здесь
+                            news -- название приложения, которое задано в urls.py с помощью директивы app_name,
+                            post_detail -- название шаблона страницы с детальным описанием в списке эндпойнтов urlpatterns,
+                            post.id -- id объекта, который передаётся через эндпойнт и подставляется вместо <int:pk>
+                         -->
+                            {{ post.postTitle|Censor }}
+                        </a></h5>
+            <!-- При нажатии на название в таблице нас теперь будет перекидывать на страницу с информацией о посте -->
+                </td>
+                <td>
+                    {{ post.postCreated|date:'d M Y' }} <!-- в формате (день.месяц.год) -->
+                </td>
+                <td>
+                    {% for cat in post.categories %}
+                        <div>
+                            <span class="badge bg-light text-dark">
+                                <a href="{% url 'news:category' cat.category.id %}" title="Посмотреть категорию" target="_blank">
+                                    {{ cat.category.categoryName }} (категория № {{ cat.category.id }})
+                                </a>
+                            </span>
+                            </br></br>
+                        </div>
+
+
+                        {% if cat.is_subscribed %}
+                        <div class="is_subscribed">
+                            <form method="post" action="{% url 'news:unsubscribe' cat.category.id %}">
+                            {% csrf_token %}
+                                <button class="btn btn-outline-primary btn-sm" type="submit">Отписаться от категории № {{ cat.category.id }}</button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="unsubscribed">
+                            <form method="post" action="{% url 'news:subscribe' cat.category.id %}">
+                            {% csrf_token %}
+                                <button class="btn btn-outline-primary btn-sm" type="submit">Подписаться на категорию № {{ cat.category.id }}</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </br></br>
+                    {% endfor %}
+                </td>
+                <td>
+                    <!-- {{ new.postText|truncatewords:20 }} --> <!-- Дописываем специальный фильтр, чтобы ограничить количество слов до 20 + многоточие. -->
+                    {{ post.postText|Censor|truncatechars:50|safe }} <!-- Дописываем специальный фильтр, чтобы ограничить количество символов до 50 + многоточие. -->
+                </td>
+                <td>
+                    {% if user.is_authenticated and post.postAuthor == user %}
+<!--                   <a href="/news/{{ post.id }}/edit" target="_blank">Редактировать</a>-->
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="window.location.href = '{% url 'news:post_create' post.id %}';" target="_blank">
+                        Редактировать
+                    </button>
+                    </br></br>
+<!--                   <a href="/news/{{ post.id }}/delete" target="_blank">Удалить</a>-->
+                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="window.location.href = '{% url 'news:post_delete' post.id %}';" target="_blank">
+                        Удалить
+                    </button>
+                    </br></br>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            <tr class="align-middle">
+                <td><h5>Можно создать новое объявление!</h5></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+<!--                <a href="/news/add/" target="_blank">Создать пост</a>-->
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.location.href = '{% url 'news:post_create' %}';" target="_blank">
+                        Создать объявление
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+<!-- Заменили код пагинатора на подключение шаблона с этим кодом -->
+{% include 'news/parts/paginator.html' %}
+
+{% else %}
+<!-- Если постов нет, то сообщаем об этом пользователю  -->
+<h2>Постов нет!</h2>
+{% endif %}
+
+{% endblock content %}
