@@ -320,6 +320,7 @@ def HomePageView(request):
     return render(request, 'news/home.html', context)
 
 
+@login_required(login_url='/accounts/login/')
 def respond_to_post(request, post_id):
     post = Post.objects.get(id=post_id)
     user = request.user
@@ -331,6 +332,8 @@ def respond_to_post(request, post_id):
         if form.is_valid():
             comment = form.save(commit=False)
             comment.commentForPost = post
+            # if not user.is_anonymous:
+            #     comment.commentUser = user
             comment.commentUser = request.user
             comment.save()
             send_email_notification(comment)
