@@ -99,15 +99,15 @@ class Post(models.Model):
     #    return self.postTitle
 
 # Установка лимита на публикации: один пользователь не может публиковать более трёх новостей в сутки
-    def save(self, *args, **kwargs):
-        # Проверяем, сколько постов уже опубликовал пользователь в течение суток
-        posts_count = Post.objects.filter(postAuthor=self.postAuthor,
-                                          postCreated__gte=timezone.now() - timezone.timedelta(days=1)).count()
-        if posts_count >= 3:
-        # Если количество постов больше или равно 3, вызываем исключение
-            raise Exception("Вы уже опубликовали максимальное количество постов за сутки")
-        # Если количество постов меньше трех, сохраняем пост
-        super().save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         # Проверяем, сколько постов уже опубликовал пользователь в течение суток
+#         posts_count = Post.objects.filter(postAuthor=self.postAuthor,
+#                                           postCreated__gte=timezone.now() - timezone.timedelta(days=1)).count()
+#         if posts_count >= 3:
+#         # Если количество постов больше или равно 3, вызываем исключение
+#             raise Exception("Вы уже опубликовали максимальное количество постов за сутки")
+#         # Если количество постов меньше трех, сохраняем пост
+#         super().save(*args, **kwargs)
 
     # def __str__(self):
     #     categories = self.postCats.all()

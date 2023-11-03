@@ -101,11 +101,13 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = context['post']
-
         user = self.request.user
+        user_has_comment = False
         # Проверяем, есть ли у пользователя уже отклик на это объявление
         #user_has_comment = post.comment_set.filter(commentUser=self.request.user).exists()
-        user_has_comment = post.comment_set.filter(commentUser=user).exists()
+        #user_has_comment = post.comment_set.filter(commentUser=user).exists()
+        if user.is_authenticated:
+            user_has_comment = post.comment_set.filter(commentUser=user).exists()
 
         context['user_has_comment'] = user_has_comment
         return context
